@@ -2,7 +2,6 @@ import os
 import time
 import pathlib
 from requests.auth import HTTPBasicAuth
-from io import TextIOWrapper
 from ytube.request import Request
 import json
 from typing import Callable

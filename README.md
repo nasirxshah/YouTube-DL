@@ -1,3 +1,6 @@
+## API USAGE
+
+``` python
 from ytube.downloader import DownLoader
 from ytube import YouTube
 
@@ -12,3 +15,6 @@ metadata = player.getMetaData()
 if stream:
     downloader = DownLoader()
     downloader.download(stream.url, f"./{metadata.title}.{stream.subtype}")
+
+```
+

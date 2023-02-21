@@ -8,11 +8,12 @@ logger = logging.getLogger(__name__)
 class Request:
     _default_timeout = 10  # in second
 
-    def __init__(self, debug=False) -> None:
+    def __init__(self, proxy:dict|None=None,debug=False) -> None:
         self.debug = debug
         self._session = requests.Session()
         self._user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
         self.timeout = self._default_timeout
+        self.proxy = proxy
 
     def get(self, url: str, params: dict | None = None):
         req = requests.Request("GET", url, params=params)
@@ -38,7 +39,7 @@ class Request:
                 f"Request: {req.method} {req.url} {req.params} {req.headers}")
 
         try:
-            resp = self._session.send(prepped, timeout=self.timeout, **kwargs)
+            resp = self._session.send(prepped, timeout=self.timeout,proxies=self.proxy, **kwargs)
         except requests.RequestException as e:
             raise e
 

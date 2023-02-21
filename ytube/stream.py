@@ -4,7 +4,6 @@ from typing import Any
 
 import ytube.exeptions as ex
 
-
 @dataclass(slots=True)
 class Stream:
     url: str = field(init=False)
