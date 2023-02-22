@@ -24,11 +24,27 @@ class Request:
             "POST", url, params=params, json=json, data=data)
         return self.send(req)
 
-    def stream(self, url: str, params: dict | None = None, chunk_size=1024*100):
-        req = requests.Request("GET", url, params=params)
-        resp = self.send(req, stream=True)
-        for content in resp.iter_content(chunk_size=chunk_size):
-            yield content
+    def stream(self, url: str, params: dict | None = None, downrange:int = 1024*1024):
+
+        downrange = downrange
+        downloaded = 0
+
+        while True:
+            headers = {
+                "Range": f"bytes={downloaded}-{downloaded + downrange - 1}"
+            }
+            req = requests.Request("GET", url, params=params,headers=headers)
+            resp = self.send(req, stream=True)
+            for content in resp.iter_content(chunk_size=128*1024):
+                yield content
+
+            file_size = int(resp.headers["Content-Range"].split("/")[1])
+            if file_size > (downloaded + downrange):
+                downloaded += downrange
+            else:
+                break
+
+
 
     def send(self, req: requests.Request, **kwargs):
         req.headers["User-Agent"] = self._user_agent
@@ -44,6 +60,6 @@ class Request:
             raise e
 
         if self.debug:
-            logger.debug(f"Response: {resp.status_code} {resp.content}")
+            logger.debug(f"Response: {resp.status_code} {resp.headers}")
 
         return resp

@@ -2,8 +2,7 @@ import ytube.exeptions as ex
 from ytube.innertube import InnerTube
 from ytube.metadata import parseMetaData
 from ytube.query import StreamQuery
-from ytube.stream import parseStream
-
+from ytube.stream import parseStream,Stream
 
 class Player:
     def __init__(self, video_id: str, innertube: InnerTube) -> None:
@@ -42,3 +41,10 @@ class Player:
 
         elif status == 'LIVE_STREAM':
             raise ex.LiveStreamError(self.video_id)
+        
+    
+    def download(self, stream:Stream, filepath:str="."):
+        metadata = self.getMetaData()
+        with open(f"{filepath}/{metadata.title}.{stream.subtype}",'wb') as fp:
+            for content in self.request.stream(stream.url):
+                fp.write(content)
