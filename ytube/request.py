@@ -26,10 +26,10 @@ class Request:
 
     def stream(self, url: str, params: dict | None = None, downrange:int = 1024*1024):
 
-        downrange = downrange
+        file_size = downrange = downrange
         downloaded = 0
-
-        while True:
+        
+        while file_size >= downloaded + downrange:
             headers = {
                 "Range": f"bytes={downloaded}-{downloaded + downrange - 1}"
             }
@@ -39,10 +39,9 @@ class Request:
                 yield content
 
             file_size = int(resp.headers["Content-Range"].split("/")[1])
-            if file_size > (downloaded + downrange):
+            if file_size > downloaded + downrange:
                 downloaded += downrange
-            else:
-                break
+            
 
 
 
