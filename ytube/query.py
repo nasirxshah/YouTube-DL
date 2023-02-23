@@ -8,7 +8,7 @@ class StreamQuery:
         self.streams = streams
 
     def filter(self,
-               resolution: str | None = None,
+               resolution: int | None = None,
                fps: int | None = None,
                type: str | None = None,
                subtype: str | None = None,
@@ -42,7 +42,11 @@ class StreamQuery:
         for func in lamdas:
             _streams = list(filter(func, _streams))
 
-        return StreamQuery(_streams)
+        orders = ['resolution', 'fps', 'bitrate']
+        if type == "audio" and adaptive == True:
+            orders = ['bitrate']
+
+        return StreamQuery(_streams).orderby(*orders)
 
     def orderby(self, *attrs):
         _streams = list(self.streams)
@@ -54,22 +58,6 @@ class StreamQuery:
 
         return StreamQuery(_streams)
 
-    def getBestQuality(self, **filters) -> Stream | None:
-        _order = []
-        if filters.get('type') == "video" and filters.get('adaptive') == True:
-            _order = ['resolution', 'fps', 'bitrate']
-
-        elif filters.get('type') == "audio" and filters.get('adaptive') == True:
-            _order = ['bitrate']
-
-        else:
-            _order = ['resolution', 'fps', 'bitrate']
-
-        _query = self.filter(**filters)
-        _query = _query.orderby(*_order)
-
-        if _query:
-            return _query[-1]
 
     def __iter__(self):
         return iter(self.streams)

@@ -12,7 +12,7 @@ class YouTube:
 
         self.watched: dict[str, Player] = {}
 
-    def watch(self, url) -> Player:
+    def watch(self, url:str) -> Player:
         video_id = Extractor.videoId(url)
 
         if video_id in self.watched:

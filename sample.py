@@ -4,8 +4,7 @@ yt = YouTube()
 player = yt.watch("https://youtu.be/x7X9w_GIm1s")
 
 
-stream = player.streams.getBestQuality(progressive=True, resolution=720)
-
-
-if stream:
-    player.download(stream,".")
+streams = player.streams.filter(progressive=True)
+print(streams)
+if streams:
+    player.download(streams[-1],".")
